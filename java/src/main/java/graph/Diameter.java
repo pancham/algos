@@ -5,7 +5,6 @@ import java.util.*;
 /**
  * Graph definitions:
  * https://www.geeksforgeeks.org/graph-measurements-length-distance-diameter-eccentricity-radius-center/
- *
  * The longest path between any two vertices is knows as the
  */
 public class Diameter {
@@ -78,6 +77,9 @@ public class Diameter {
     // navigated from any node to another.
     // Note that this method will not work for directed graphs, use graph variants for such graphs.
     public int treeDiameter(Map<Integer, List<Integer>> graph) {
+        if (graph.isEmpty()) {
+            return 0;
+        }
         // pick any node
         int start = graph.keySet().stream().findFirst().get();
 
@@ -94,6 +96,9 @@ public class Diameter {
     // navigated from any node to another.
     // Note that this method will not work for directed graphs, use graph variants for such graphs.
     public List<Integer> treeLongestPathElements(Map<Integer, List<Integer>> graph) {
+        if (graph.isEmpty()) {
+            return List.of();
+        }
         // pick any node
         int start = graph.keySet().stream().findFirst().get();
 
@@ -107,12 +112,16 @@ public class Diameter {
 
         // Step 3: Trace the path between the two endpoints
         return bfsPath(graph, otherEndpoint, farthestNode);
-
     }
 
     public int graphDiameter(Map<Integer, List<Integer>> graph) {
         // A graph may have multiple sets of connected nodes. All nodes/vertices in a graph need to be
         // iterated to find the furthest nodes.
+
+        if (graph.isEmpty()) {
+            return 0;
+        }
+
         int farthestDistance = -1;
 
         for (int node: graph.keySet()) {
@@ -126,6 +135,10 @@ public class Diameter {
     }
 
     public List<Integer> graphLongestPathElements(Map<Integer, List<Integer>> graph) {
+        if (graph.isEmpty()) {
+            return List.of();
+        }
+
         // A graph may have multiple sets of connected nodes. All nodes/vertices in a graph need to be
         // iterated to find the furthest nodes.
         int start = Integer.MIN_VALUE;
