@@ -37,18 +37,22 @@ public class FourDigitCodeSum {
         return res;
     }
 
-    static int basicSolution(int S) {
+    static int basicSolution(int sum, int numDigits, int maxPerDigit) {
+        int max = 0;
+        for (int i = numDigits - 1; i >= 0; i--) {
+            max += maxPerDigit * (Math.pow(10, i));
+        }
         int count = 0;
-        if (S == 0) return 1;
+        if (sum == 0) return 1;
 
-        for (int i = 1; i <= 9999; i++) {
+        for (int i = 1; i <= max; i++) {
             int cur = i;
-            int sum = 0;
+            int sumSoFar = 0;
             while (cur > 0) {
-                sum += cur % 10;
+                sumSoFar += cur % 10;
                 cur /= 10;
             }
-            if (sum == S) {
+            if (sumSoFar == sum) {
                 count++;
             }
         }
@@ -115,9 +119,11 @@ public class FourDigitCodeSum {
     public static void main(String[] args) {
 
         int mismatch = 0;
+        int numDigits = 4;
+        int maxPerDigit = 9;
         for (int S = 0; S <= 36; S++) {
-            int c0 = basicSolution(S);
-            int c1 = combinatoricsSolution(S, 4, 9);
+            int c0 = basicSolution(S, numDigits, maxPerDigit);
+            int c1 = combinatoricsSolution(S, numDigits, maxPerDigit);
 
             if (c0 == c1) {
                 System.out.printf("match for %d = %d%n",  S, c0);
