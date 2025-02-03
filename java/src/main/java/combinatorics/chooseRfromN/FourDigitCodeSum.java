@@ -12,16 +12,18 @@ public class FourDigitCodeSum {
      * <p>The formula for d numbers that sum up to s with the restriction 0 <= x <= b:</p>
      *        <img src="./choose-r-from-n-with-bounds.png" width="100%" />
      *
-     * @param S
+     * @param sum
      * @return The number of valid combinations that sum up to s
      */
-    static int combinatoricsSolution(int S) {
-        if (S < 0 || S > 36) return 0; // Max sum is 9+9+9+9 = 36
+    static int combinatoricsSolution(int sum, int numDigits, int maxPerDigit) {
+        int maxSum = numDigits * maxPerDigit;
+        if (sum < 0 || sum > maxSum) return 0; // Max sum is 9+9+9+9 = 36
 
         int count = 0;
-        for (int k = 0; k <= 4; k++) { // (S / 10)
+        for (int k = 0; k <= numDigits; k++) { // (S / 10)
             int sign = (k % 2 == 0) ? 1 : -1;
-            count += sign * binomial(4, k) * binomial(S - 10 * k + 3, 3);
+            count += sign * binomial(numDigits, k)
+                    * binomial(sum + (numDigits - 1) - (maxPerDigit + 1) * k, numDigits - 1);
         }
         return count;
     }
@@ -55,7 +57,6 @@ public class FourDigitCodeSum {
     }
 
     static int nestedLoopSolution(int S) {
-
         int count = 0;
         for (int a = 0; a <= 9; a++) {
             if (a > S) break;
@@ -79,7 +80,7 @@ public class FourDigitCodeSum {
                         if (a + b + c + d  > S) break;
                         if (a + b + c + d  == S) {
                             count++;
-                            continue;
+                            break;
                         }
                     }
                 }
@@ -116,17 +117,17 @@ public class FourDigitCodeSum {
         int mismatch = 0;
         for (int S = 0; S <= 36; S++) {
             int c0 = basicSolution(S);
-            int c1 = combinatoricsSolution(S);
+            int c1 = combinatoricsSolution(S, 4, 9);
 
             if (c0 == c1) {
-                System.out.println(String.format("match for %d = %d",  S, c0));
+                System.out.printf("match for %d = %d%n",  S, c0);
             } else {
-                System.out.println(String.format("MISMATCH for %d, %d and %d",  S, c0, c1));
+                System.out.printf("MISMATCH for %d, %d and %d%n",  S, c0, c1);
                 mismatch++;
             }
 
         }
 
-        System.out.println(String.format("MISMATCH count %d", mismatch));
+        System.out.printf("MISMATCH count %d%n", mismatch);
     }
 }
