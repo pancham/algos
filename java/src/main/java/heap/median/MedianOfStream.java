@@ -18,13 +18,14 @@ public class MedianOfStream {
     // smaller half of elements
     private final PriorityQueue<Integer> maxHeap;
 
-
     MedianOfStream() {
         minHeap = new PriorityQueue<>();
         maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
     }
 
     void add(int num) {
+        // the heaps are constructed such a way that minHeap (containing second part of elements)
+        // may have one more element
         if (minHeap.size() == maxHeap.size()) {
             maxHeap.offer(num);
             minHeap.offer(maxHeap.poll());

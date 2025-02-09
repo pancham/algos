@@ -35,7 +35,7 @@ public class BalancedPartition {
         return T[wt.length][target];
     }
 
-    public List<List<Integer>> getPartitions(int[] wt){
+    public Set<Set<Integer>> getPartitions(int[] wt){
         int maxW = 0;
         for (int j : wt) {
             maxW += j;
@@ -73,17 +73,17 @@ public class BalancedPartition {
             }
         }
 
-        List<List<Integer>> partitions = new ArrayList<>(2);
-        List<Integer> p1 = new ArrayList<>(selections);
+        // LinkedHashSet is used to preserve the order
+        Set<Set<Integer>> partitions = new LinkedHashSet<>(2);
+        Set<Integer> p1 = new LinkedHashSet<>(selections);
         partitions.add(p1);
 
-        List<Integer> p2 = new ArrayList<>();
+        Set<Integer> p2 = new HashSet<>();
         for (int curW: wt) {
             if (!selections.contains(curW)) {
                 p2.add(curW);
             }
         }
-        Collections.sort(p2);
         partitions.add(p2);
 
         return partitions;
@@ -96,7 +96,7 @@ public class BalancedPartition {
         int r = k.minimizeDifference(wt);
         System.out.println(r);
 
-        List<List<Integer>> partitions = k.getPartitions(wt);
+        Set<Set<Integer>> partitions = k.getPartitions(wt);
         System.out.println(partitions);
     }
 }
