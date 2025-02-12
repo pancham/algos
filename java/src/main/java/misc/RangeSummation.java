@@ -13,30 +13,54 @@ public class RangeSummation {
      * @param arg
      */
     public static void main(String[] arg) {
-        System.out.println("with range summation " + getSumWithRangeSummation(13));
-        System.out.println("without range summation " + getSumInefficiently(13));
+        int n = (int) Math.pow(10, 10);
+        long withRange = findDependentSum(n);
+        long withoutRange = getSumInefficiently(n);
+        System.out.println("with range summation " + withRange);
+        System.out.println("without range summation " + withoutRange);
+
+        if (withRange == withoutRange) {
+            System.out.println("Values match");
+        } else {
+            System.out.println("Values do not match, difference: " + (withRange - withoutRange));
+        }
     }
 
-    public static long getSumWithRangeSummation(long n) {
-        /**
-         * Note that floor(n / k) = x, will be true for a range of k values. The range of k values is:
-         *
-         * (x * k) + (k - 1)
-         *
-         */
-        long count = 0;
+    public static long findDependentSum(int n) {
+        long sum = 0;
+        int sqrtN = (int) Math.sqrt(n);
 
-        int k = 2;
-        do {
-            long x = n / k;
-            count += x;
+        // Case 1: This is for larger values of x (or smaller values of k)
+        // consider the smallest value of k that gives x = sqrt(n)
+        //  k = n / sqrt(n) = sqrt(n)
+        // This means that for 1 <= k <= sqrt(n), all the values of x will be greater sqrt(n). This k range of values
+        // will cover all x values >= sqrt(n)
+        // For this smaller range of k values, we iterate directly over the range
+        int last = -1;
+        for (int k = 1; k <= sqrtN; k++) {
+            int current = (n / k);
+            if (current != last) {
+                sum += current;
+                last = current;
+            }
+        }
 
-            // advance i for range of values for which floor(n / k) will be same
-            k += (x * k) + (k - 1);
+        // Case 2: This is for smaller values of x (or larger values of k), using range summation
+        // All x values >= sqrt(n) are covered in the Case 1, by iterating over smaller values of k.
+        // What remains now is x < sqrt(n), and we accomplish it in the following loop by iterating
+        // over x values upto sqrt(n)
+        // Note that this loop also proceeds upto sqrt(n), as the loop in Case 1. However, case 1 is iterating
+        // for k values and this loop is iterating for x values.
+        for (int x = 1; x <= sqrtN; x++) {
+            int startK = n / (x + 1) + 1;  // First k where floor(n/k) == x
+            int endK = n / x;              // Last k where floor(n/k) == x
 
-        } while(k < n);
+            if (startK <= endK && endK != sqrtN) { // the check for end != sqrtN, is required to avoid duplicate, because it is included in Case 1
+                sum += x;
+            }
+        }
 
-        return count;
+        return sum;
     }
 
     public static long getSumInefficiently(long n) {
@@ -46,16 +70,19 @@ public class RangeSummation {
          * for k == n, x will be 1
          * for k == 1, x will be n
          *
-         * The remaining possible values for k, which can result in an interger in the range 0<=x<=n, are 2 to n-1.
+         * The remaining possible values for k, which can result in an integer in the range 0<=x<=n, are 2 to n-1.
          * Further, for any k > n/2 - the result will always be 1.
          */
 
         if (n == 1) return 1;
         long lastX = 0;
         long count = 1 + n;
-        for(long k = n/2 ; k >= 2; k--) {
+        for(long k = n/2; k >= 2; k--) {
             long x = n/k;
-            if (lastX != x) {count += x; lastX = x;}
+            if (lastX != x) {
+                count += x;
+                lastX = x;
+            }
         }
         return count;
     }
