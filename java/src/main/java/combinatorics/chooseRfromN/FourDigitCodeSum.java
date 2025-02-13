@@ -95,34 +95,15 @@ public class FourDigitCodeSum {
         return count;
     }
 
-    static class Result {
-        int count;
-    }
-    static void recursiveSolution(int curpos, int maxpos, int currentSum, int S, Result r) {
-        if (curpos >= maxpos) {
-            return;
-        }
-
-        for (int i = 0; i <= 9; i++) {
-            int sum = currentSum + i;
-            if (sum > S) {
-                return;
-            }
-            if (sum == S) {
-                r.count++;
-                return;
-            }
-            recursiveSolution(curpos + 1, maxpos, sum, S, r);
-        }
-    }
-
     public static void main(String[] args) {
 
         int mismatch = 0;
         int numDigits = 4;
         int maxPerDigit = 9;
+
+        RecursiveSolution rs = new RecursiveSolution();
         for (int S = 0; S <= 36; S++) {
-            int c0 = basicSolution(S, numDigits, maxPerDigit);
+            int c0 = rs.solve(4, S);//basicSolution(S, numDigits, maxPerDigit);
             int c1 = combinatoricsSolution(S, numDigits, maxPerDigit);
 
             if (c0 == c1) {
