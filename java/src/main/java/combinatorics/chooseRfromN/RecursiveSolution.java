@@ -1,14 +1,22 @@
 package combinatorics.chooseRfromN;
 
+import java.util.Arrays;
+
 public class RecursiveSolution {
     int maxpos;
     int S;
+
+    private int[][] memo;
 
     public int solve(int maxpos, int S) {
         this.maxpos = maxpos;
         this.S = S;
 
-        return solution(0, 0);
+        memo = new int[maxpos][S + 1]; // Memoization table
+        for (int[] row : memo) Arrays.fill(row, -1);
+
+        int count = solution(0, 0);
+        return count;
     }
 
     private int solution(int curpos, int currentSum) {
@@ -16,20 +24,24 @@ public class RecursiveSolution {
             return 0;
         }
 
+        if (memo[curpos][currentSum] != -1) {
+            return memo[curpos][currentSum];
+        }
+
         int count = 0;
         for (int i = 0; i <= 9; i++) {
             int sum = currentSum + i;
             if (sum > S) {
-                return 0;
+                return memo[curpos][currentSum] = 0;
             }
 
             if (sum == S) {
-                return count += 1;
+                return memo[curpos][currentSum] = count + 1;
             } else {
                 count = count + solution(curpos + 1, sum);
             }
         }
 
-        return count;
+        return memo[curpos][currentSum] = count;
     }
 }
