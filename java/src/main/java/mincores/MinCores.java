@@ -7,10 +7,16 @@ public class MinCores {
 //        System.out.println("Hello");
 
         // [1, 3, 4], end = [3, 5, 6]
+//        List<List<Integer>> times = List.of(
+//                List.of(1, 3),
+//                List.of(3, 5),
+//                List.of(4, 6)
+//        );
+
         List<List<Integer>> times = List.of(
-                List.of(1, 3),
-                List.of(3, 5),
-                List.of(4, 6)
+                List.of(1, 5),
+                List.of(8, 9),
+                List.of(8, 9)
         );
 
         int ret = minCores(times);
@@ -29,23 +35,22 @@ public class MinCores {
         Collections.sort(startArr);
         Collections.sort(endArr);
 
-        int max = 0;
+        int min = 1;
         int current = 0;
         int j = 0;
 
-        for (Integer integer : startArr) {
-            if (integer <= endArr.get(j)) {
-                current++;
-            } else {
+        for (Integer i : startArr) {
+            while (i >= endArr.get(j)) {
                 j++;
-                if (current > max) {
-                    max = current;
-                }
-                current = 0;
+                current--;
+            }
+            current++;
+            if (current > min) {
+                min = current;
             }
         }
 
-        return max;
+        return min;
     }
 
 
