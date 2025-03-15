@@ -16,11 +16,14 @@ import java.util.Deque;
  *
  * Follow up: Could you design the expression tree such that it is more modular? For example, is your design able to support additional operators without making changes to your existing evaluate implementation?
  * <p>
- * Input: s = ["3","4","+","2","*","7","/"]
+ *      <img src="./postfixexpressiontree1628-1.png" />
+ *      <p>Input: s = ["3","4","+","2","*","7","/"]</p>
  * Output: 2
  *</p>
+ *
  * <p>
- * Input: s = ["4","5","2","7","+","-","*"]
+ *      <img src="./postfixexpressiontree1628-2.png" />
+ *      <p>Input: s = ["4","5","2","7","+","-","*"]</p>
  * Output: -16
  * </p>
  */
