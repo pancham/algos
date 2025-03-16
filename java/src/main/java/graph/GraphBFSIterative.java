@@ -18,7 +18,8 @@ public class GraphBFSIterative {
 
             List<Integer> neighbors = graph.get(currentNode);
             if (neighbors != null) {
-                for (int neighbor : neighbors) {
+                for (int i = 0; i < neighbors.size(); i++) {
+                    int neighbor = neighbors.get(i);
                     if (!visited.contains(neighbor)) {
                         queue.add(neighbor);
                         visited.add(neighbor);

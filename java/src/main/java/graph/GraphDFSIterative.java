@@ -10,20 +10,19 @@ class GraphDFSIterative {
 
         stack.push(startNode);
         visited.add(startNode);
-        result.add(startNode);
 
         while (!stack.isEmpty()) {
             int currentNode = stack.pop();
+            result.add(currentNode);
 
             List<Integer> neighbors = graph.get(currentNode);
             if (neighbors != null) {
-                // Iterate in reverse order to maintain DFS behavior
+                // NOTE: start from end to maintain DFS order from left to right
                 for (int i = neighbors.size() - 1; i >= 0; i--) {
                     int neighbor = neighbors.get(i);
                     if (!visited.contains(neighbor)) {
                         stack.push(neighbor);
                         visited.add(neighbor);
-                        result.add(neighbor);
                     }
                 }
             }

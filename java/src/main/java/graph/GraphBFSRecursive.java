@@ -6,41 +6,48 @@ public class GraphBFSRecursive {
 
     // Note that making these variables member variables instead of passing on the call stack during recursive call
     // to reduce the call stack size
+    private Map<Integer, List<Integer>> graph;
     List<Integer> result;
-    Queue<Integer> queue;
     Set<Integer> visited;
+    Queue<Integer> queue;
+
+    public GraphBFSRecursive(Map<Integer, List<Integer>> graph) {
+        this.graph = graph;
+        this.visited = new HashSet<>();
+        this.result = new ArrayList<>();
+        this.queue = new LinkedList<>();
+    }
 
     // Recursive BFS returning a List of visited nodes
     public List<Integer> bfsRecursive(Map<Integer, List<Integer>> graph, int startNode) {
-        result = new ArrayList<>();
-        queue = new LinkedList<>();
-        visited = new HashSet<>();
+        visited.clear();
+        result.clear();
+        queue.clear();
 
         queue.add(startNode);
         visited.add(startNode);
-        result.add(startNode);
-
-        bfsRecursiveHelper(graph);
+        bfsRecursiveHelper();
         return result;
     }
 
-    private void bfsRecursiveHelper(Map<Integer, List<Integer>> graph) {
+    private void bfsRecursiveHelper() {
         if (queue.isEmpty()) {
             return;
         }
 
         int currentNode = queue.poll();
+        result.add(currentNode);
+
         List<Integer> neighbors = graph.get(currentNode);
         if (neighbors != null) {
             for (int neighbor : neighbors) {
                 if (!visited.contains(neighbor)) {
-                    queue.add(neighbor);
                     visited.add(neighbor);
-                    result.add(neighbor);
+                    queue.add(neighbor);
                 }
             }
         }
-        bfsRecursiveHelper(graph);
+        bfsRecursiveHelper();
     }
 
     public static void main(String[] args) {
@@ -52,7 +59,7 @@ public class GraphBFSRecursive {
         graph.put(4, Arrays.asList(3));
 
         System.out.println("BFS Traversal (Recursive) starting from node 0:");
-        GraphBFSRecursive graphBFS = new GraphBFSRecursive();
+        GraphBFSRecursive graphBFS = new GraphBFSRecursive(graph);
         List<Integer> recursiveResult = graphBFS.bfsRecursive(graph, 0);
         System.out.println(recursiveResult);
     }
