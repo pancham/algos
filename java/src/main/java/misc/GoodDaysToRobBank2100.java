@@ -1,8 +1,10 @@
 package misc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * https://algo.monster/liteproblems/2100
  * You and a gang of thieves are planning on robbing a bank. You are given a 0-indexed integer array security, where security[i] is the number of guards on duty on the ith day. The days are numbered starting from 0. You are also given an integer time.
  *
  * The ith day is a good day to rob the bank if:
@@ -43,7 +45,54 @@ import java.util.List;
  */
 public class GoodDaysToRobBank2100 {
     public List<Integer> goodDaysToRobBank(int[] security, int time) {
-        return null;
+        // Get the length of the `security` array.
+        int n = security.length;
+        // If the length is not sufficient to have days before and after the time period, return an empty list.
+        if (n <= time * 2) {
+            return List.of();
+        }
+
+        // Arrays to keep track of the non-increasing trend to the left and non-decreasing trend to the right.
+        int[] nonIncreasingLeft = new int[n];
+        int[] nonDecreasingRight = new int[n];
+
+        // Populate the nonIncreasingLeft array by checking if each day is non-increasing compared to the previous day.
+        for (int i = 1; i < n; ++i) {
+            if (security[i] <= security[i - 1]) {
+                nonIncreasingLeft[i] = nonIncreasingLeft[i - 1] + 1;
+            }
+        }
+
+        // Populate the nonDecreasingRight array by checking if each day is non-decreasing compared to the next day.
+        for (int i = n - 2; i >= 0; --i) {
+            if (security[i] <= security[i + 1]) {
+                nonDecreasingRight[i] = nonDecreasingRight[i + 1] + 1;
+            }
+        }
+
+        // To store the good days to rob the bank.
+        List<Integer> goodDays = new ArrayList<>();
+
+        // Check each day to see if it can be a good day to rob the bank.
+        for (int i = time; i < n - time; ++i) {
+            // A day is good if there are at least `time` days before and after it forming non-increasing and non-decreasing trends.
+            if (time <= Math.min(nonIncreasingLeft[i], nonDecreasingRight[i])) {
+                goodDays.add(i);
+            }
+        }
+        // Return the list of good days.
+        return goodDays;
+    }
+
+    public static void main(String[] args) {
+        int[] security = new int[] {
+                5, 3, 3, 3, 5, 6, 2     // return [2, 3] with time = 2
+        };
+        int time = 2;
+
+        GoodDaysToRobBank2100 g = new GoodDaysToRobBank2100();
+        List<Integer> goodDays = g.goodDaysToRobBank(security, time);
+        System.out.println("validDays = " + goodDays);
     }
 
 }
