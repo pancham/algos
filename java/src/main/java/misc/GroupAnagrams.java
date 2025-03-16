@@ -23,14 +23,17 @@ public class GroupAnagrams {
 //        List<String> strs = List.of("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         List<String> strs = List.of("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab");
-        List<List<String>> groups = groupAnagrams1(strs);
+        List<List<String>> groups = groupAnagrams(strs);
 
         System.out.println(groups);
     }
 
-    static List<List<String>> groupAnagrams1(List<String> strs) {
+    static List<List<String>> groupAnagrams(List<String> strs) {
+        // The list in the key is of length 26, and each value at the index
+        // corresponds to the number of times the particular character has occured in the string
         Map<List<Integer>, List<String>> map = new HashMap<>();
         for (String s: strs) {
+            //
             List<Integer> list = new ArrayList<>(26);
             for (int i = 0; i < 26; i++) {
                 list.add(0);
@@ -52,7 +55,7 @@ public class GroupAnagrams {
         return ret;
     }
 
-    static List<List<String>> groupAnagrams(List<String> strs) {
+    static List<List<String>> groupAnagramsWithPrimes(List<String> strs) {
         Map<BigInteger, List<String>> map = new HashMap<>();
 
         // Generate a prime for each character in the alphabet
