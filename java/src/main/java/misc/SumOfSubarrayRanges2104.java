@@ -62,6 +62,8 @@ public class SumOfSubarrayRanges2104 {
 
         long sum = 0;
 
+        // Note that it is "<=" so that the logic in pushToStack can be run one more time to process
+        // any remaining items on the stack.
         for (int i = 0; i <= nums.length; i++) {
             long max_subarray_sum_for_prev_items = pushToStack(dec_stack, nums, i, (a, b) -> a < b);
             long min_subarray_sum_for_prev_items = pushToStack(inc_stack, nums, i, (a, b) -> a > b);
@@ -75,8 +77,8 @@ public class SumOfSubarrayRanges2104 {
         long sum = 0;
 
         while (!stack.isEmpty() &&
-                (i == nums.length ||
-                 compare.apply(nums[stack.peek()], nums[i]))
+                compare.apply(nums[stack.peek()], nums[i])
+                || i == nums.length     // this option is there to process all remaining items
         ) {
             int pop_i = stack.pop();
             int prev_i = stack.isEmpty() ? -1 : stack.peek();
