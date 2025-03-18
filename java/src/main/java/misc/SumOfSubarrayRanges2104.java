@@ -54,6 +54,9 @@ import java.util.function.BiFunction;
 public class SumOfSubarrayRanges2104 {
 
     public long subArrayRanges(int[] nums) {
+        // Example
+        // Numbers:     4 5 6 3 7 8 9 2 5 0
+        // Indexes:     0 1 2 3 4 5 6 7 8 9
 
         // dec_stack -> finds previous and next greater elements, used to determine the number of sub-arrays in which an item is greatest
         Deque<Integer> dec_stack = new ArrayDeque<>();
