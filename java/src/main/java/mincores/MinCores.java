@@ -36,17 +36,17 @@ public class MinCores {
         Collections.sort(endArr);
 
         int min = 1; // minimum 1 is always required
-        int current = 0;
+        int numCores = 0;
         int j = 0;
 
         for (Integer i : startArr) {
             while (i >= endArr.get(j)) {
                 j++; // finished tasks
-                current--;
+                numCores--;
             }
-            current++;
-            if (current > min) {
-                min = current;
+            numCores++;
+            if (numCores > min) {
+                min = numCores;
             }
         }
 
