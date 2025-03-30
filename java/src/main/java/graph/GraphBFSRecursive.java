@@ -19,7 +19,7 @@ public class GraphBFSRecursive {
     }
 
     // Recursive BFS returning a List of visited nodes
-    public List<Integer> bfsRecursive(Map<Integer, List<Integer>> graph, int startNode) {
+    public List<Integer> bfsRecursive(int startNode) {
         visited.clear();
         result.clear();
         queue.clear();
@@ -60,7 +60,7 @@ public class GraphBFSRecursive {
 
         System.out.println("BFS Traversal (Recursive) starting from node 0:");
         GraphBFSRecursive graphBFS = new GraphBFSRecursive(graph);
-        List<Integer> recursiveResult = graphBFS.bfsRecursive(graph, 0);
+        List<Integer> recursiveResult = graphBFS.bfsRecursive(0);
         System.out.println(recursiveResult);
     }
 }

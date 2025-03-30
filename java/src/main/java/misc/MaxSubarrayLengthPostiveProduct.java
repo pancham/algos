@@ -39,13 +39,16 @@ public class MaxSubarrayLengthPostiveProduct {
             if (nums[i] > 0) {
                 // If the current number is positive, increase the length of positive product subarray
                 ++positiveCount;
-                // If there was a negative product subarray, increase its length too
+                // If there was a negative product subarray, increase its length too, as a positive number
+                // won't affect the sign of an already negative product.
                 negativeCount = negativeCount > 0 ? negativeCount + 1 : 0;
             } else if (nums[i] < 0) {
-                // If the current number is negative, swap the lengths of positive and negative product subarrays
-                int previousPositiveCount = positiveCount;
                 int previousNegativeCount = negativeCount;
-                negativeCount = previousPositiveCount + 1;
+
+                // A negative number will change the positive product to negative
+                negativeCount = positiveCount + 1;
+
+                // if there was a previous negative count, then this negative umber will make the product positive
                 positiveCount = previousNegativeCount > 0 ? previousNegativeCount + 1 : 0;
             } else {
                 // If the current number is zero, reset the lengths as any sequence will be discontinued by zero

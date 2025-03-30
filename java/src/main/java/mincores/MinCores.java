@@ -24,6 +24,22 @@ public class MinCores {
     }
 
     public static int minCores(List<List<Integer>> times) {
+        SortedMap<Integer, Integer> map = new TreeMap<>();
+
+        for (List<Integer> pair: times) {
+            map.put(pair.get(0), 1);    // +1 for each start time
+            map.put(pair.get(1), -1);   // -1 for each end time
+        }
+
+        int count = 0;
+        for (int value: map.values()) {
+            count += value;
+        }
+
+        return count;
+    }
+
+    public static int minCores2(List<List<Integer>> times) {
         List<Integer> startArr = new ArrayList<>();
         List<Integer> endArr = new ArrayList<>();
 

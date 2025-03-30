@@ -9,7 +9,8 @@ package misc;
  * Implement the TicTacToe class:
  *
  * TicTacToe(int n) Initializes the object the size of the board n.
- * int move(int row, int col, int player) Indicates that the player with id player plays at the cell (row, col) of the board. The move is guaranteed to be a valid move, and the two players alternate in making moves. Return
+ * int move(int row, int col, int player) Indicates that the player with id player plays at the cell (row, col) of the board.
+ * The move is guaranteed to be a valid move, and the two players alternate in making moves. Return
  * 0 if there is no winner after the move,
  * 1 if player 1 is the winner after the move, or
  * 2 if player 2 is the winner after the move.

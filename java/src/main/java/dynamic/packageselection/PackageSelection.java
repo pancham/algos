@@ -29,6 +29,10 @@ package dynamic.packageselection;
  * Returns
  *
  * int: the number of perfect packaging that can be done modulo (10^9 + 7)
+ *
+ * Constraints:
+ * 1 ≤ n ≤ 105
+ * 1 ≤ prices[i] ≤ 105
  */
 import java.util.Arrays;
 

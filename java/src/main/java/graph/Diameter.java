@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Graph definitions:
  * https://www.geeksforgeeks.org/graph-measurements-length-distance-diameter-eccentricity-radius-center/
- * The longest path between any two vertices is knows as the
+ * The longest path between any two vertices is knows as the diameter of the graph
  */
 public class Diameter {
 

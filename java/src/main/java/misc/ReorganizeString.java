@@ -51,6 +51,7 @@ public class ReorganizeString {
     public String reorganizeString(String str) {
         Map<Character, Integer> m1 = new HashMap<>();
 
+        // count number of times a character occurs in string
         for (Character c: str.toCharArray()) {
             m1.compute(c, (k, v) -> (v == null) ? 1 : v + 1);
         }
