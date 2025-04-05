@@ -34,3 +34,10 @@ class Backtrack {
                 
     }
 }
+
+## DP Patterns
+* Fibonacci
+* 0/1 Knapsack
+* Unbounded Knapsack
+* Longest Common Subsequence
+* Palindromes

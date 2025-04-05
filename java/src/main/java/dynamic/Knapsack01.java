@@ -5,11 +5,11 @@ import java.util.*;
 public class Knapsack01 {
 
     /**
+     * IMP: watch https://www.youtube.com/watch?v=-kedQt2UmnE
      * Solves 0/1 knapsack in bottom up dynamic programming
      */
 
     public int maxValue(int[] val, int[] wt, int maxW){
-        // IMP: watch https://www.youtube.com/watch?v=-kedQt2UmnE
         int[][] T = new int[wt.length + 1][maxW + 1];
         for(int i=1; i <= wt.length; i++) {
             for(int w=0; w <= maxW; w++) {
