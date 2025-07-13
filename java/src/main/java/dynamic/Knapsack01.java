@@ -62,7 +62,7 @@ public class Knapsack01 {
         return selections;
     }
 
-    // testing to see if it works
+    // testing to see if it works - rakesh
     public static void main(String[] args){
         Knapsack01 k = new Knapsack01();
         int[] val = {22, 20, 15, 30, 24, 54, 21, 32, 18, 25};
