@@ -6,13 +6,13 @@ public class StringCombinationsWithoutPattern {
     }
 
     // Declare as member variable to avoid putting the value on stack in recursive calls
-    private String patternToExclude;
+    // private String patternToExclude;
     private int n;
 
 
     StringCombinationsWithoutPattern(int n) {
         this.n = n;
-//        this.patternToExclude = patternToExclude;
+    //    this.patternToExclude = patternToExclude;
     }
 
     int countStrings(StringBuffer buf) {

@@ -34,7 +34,7 @@ public class MinCores {
         int count = 0, ans = 0;
         for (int value: map.values()) {
             count += value;
-            ans = Math.max(ans, cur);
+            ans = Math.max(ans, count);
         }
 
         return ans;
@@ -57,7 +57,7 @@ public class MinCores {
         int end = 0;
 
         for (Integer start : startArr) {
-            while (start >= endArr.get(j)) {
+            while (start >= endArr.get(end)) {
                 end++; // finished tasks
                 numCores--;
             }
