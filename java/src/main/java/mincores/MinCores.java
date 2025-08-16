@@ -27,16 +27,17 @@ public class MinCores {
         SortedMap<Integer, Integer> map = new TreeMap<>();
 
         for (List<Integer> pair: times) {
-            map.put(pair.get(0), 1);    // +1 for each start time
-            map.put(pair.get(1), -1);   // -1 for each end time
+            map.put(pair.get(0), map.getOrDefault(pair.get(0), 0) + 1);    // +1 for each start time
+            map.put(pair.get(1), map.getOrDefault(pair.get(1), 0) -1);   // -1 for each end time
         }
 
-        int count = 0;
+        int count = 0, ans = 0;
         for (int value: map.values()) {
             count += value;
+            ans = Math.max(ans, cur);
         }
 
-        return count;
+        return ans;
     }
 
     public static int minCores2(List<List<Integer>> times) {
@@ -53,11 +54,11 @@ public class MinCores {
 
         int min = 1; // minimum 1 is always required
         int numCores = 0;
-        int j = 0;
+        int end = 0;
 
-        for (Integer i : startArr) {
-            while (i >= endArr.get(j)) {
-                j++; // finished tasks
+        for (Integer start : startArr) {
+            while (start >= endArr.get(j)) {
+                end++; // finished tasks
                 numCores--;
             }
             numCores++;
