@@ -1,4 +1,4 @@
-package main.java.lc.prefix;
+package lc.prefix;
 
 import java.util.HashMap;
 import java.util.Map;
