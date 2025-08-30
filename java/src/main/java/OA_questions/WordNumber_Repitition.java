@@ -1,4 +1,6 @@
-import java.util.*;
+
+
+import java.util.Stack;
 /* 
  * Problem: given a string formated with a word enclosed by (), 
  * followed by a number enclose by {}, return the word repeated that many times

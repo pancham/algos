@@ -22,26 +22,27 @@ public class MinimumHealth {
     public static int[] readNumbers() throws IOException {
         Path filePath = Paths.get("./minimumhealth.txt"); // Replace with your file path
 
-        Stream<String> lines = Files.lines(filePath);
-        List<Integer> numbers = lines
-                .flatMap(line -> Arrays.stream(line.split(",")))
-                .map(String::trim)
-                .map(Integer::parseInt)
-                .collect(Collectors.toList());
+        try (Stream<String> lines = Files.lines(filePath)) {
+            List<Integer> numbers = lines
+                    .flatMap(line -> Arrays.stream(line.split(",")))
+                    .map(String::trim)
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toList());
 
-        return numbers.stream().mapToInt(Integer::intValue).toArray();
+            return numbers.stream().mapToInt(Integer::intValue).toArray();
+        }
 
     }
 
     public long minimumHealth(int[] damage, int armor) {
         long max = Long.MIN_VALUE;
-        int maxIndex = -1;
+        // int maxIndex = -1;
         long total = 0;
 
         for (int i =0; i < damage.length; i++) {
             if (damage[i] > max) {
                 max = damage[i];
-                maxIndex = i;
+                // maxIndex = i;
             }
             total += damage[i];
         }

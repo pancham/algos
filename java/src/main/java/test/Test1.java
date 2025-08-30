@@ -2,8 +2,6 @@ package test;
 
 import java.util.*;
 
-import java.util.*;
-
 class Test1 {
     public static int bfsTraversal(Map<Integer, Integer> graph, int startNodeId) {
         Queue<Integer> queue = new LinkedList<>();

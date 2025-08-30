@@ -53,7 +53,7 @@ public class ReorganizeString {
 
         // count number of times a character occurs in string
         for (Character c: str.toCharArray()) {
-            m1.compute(c, (k, v) -> (v == null) ? 1 : v + 1);
+            m1.compute(c, (_, v) -> (v == null) ? 1 : v + 1);
         }
 
         // create a max heap
