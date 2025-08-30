@@ -6,7 +6,7 @@ public class SentryOA {
     // if single word on line, align in center, and exptra space goes to right
     // Hyphenated words, like 'sister-in-law', should ideally be on one line
         // but if they don't fit, break the word 
-    public List<String> textJustification(String[] words, int maxWidth) {
+    public List<String> harderTextJustification(String[] words, int maxWidth) {
         List<String> res = new ArrayList<>();
 
         Deque<String> wordList = new ArrayDeque<>();
@@ -15,13 +15,12 @@ public class SentryOA {
         while (!wordList.isEmpty()) {
             List<String> lineWords = new ArrayList<>();
 
-            int letters = 0, wordsWithSpaces = 0;
-            while (!wordList.isEmpty() && (letters + wordsWithSpaces + wordList.getFirst().length() <= maxWidth)) {
+            int letters = 0;
+            while (!wordList.isEmpty() && (letters + lineWords.size() + wordList.getFirst().length() <= maxWidth)) {
                 String word = wordList.removeFirst(); 
                 lineWords.add(word);
                 letters += word.length();
-                ++wordsWithSpaces;
-            } --wordsWithSpaces; // last word won't have space after it
+            }
 
             // account for hyphenated word
             if (!wordList.isEmpty() && wordList.getFirst().contains("-")) {
@@ -32,7 +31,7 @@ public class SentryOA {
                 int splitIdx = 0;
                 StringBuilder leftWord = new StringBuilder();
                 for (String word : hypenatedWords) {
-                    if (letters + wordsWithSpaces + word.length() <= maxWidth) {
+                    if (letters + lineWords.size() + word.length() <= maxWidth) {
                         leftWord.append(word);
                         letters += word.length();
                         splitIdx += word.length();
@@ -40,7 +39,7 @@ public class SentryOA {
                     else break;
                 }
                 if (!leftWord.isEmpty()) {
-                    ++wordsWithSpaces; lineWords.add(leftWord.toString()); 
+                    lineWords.add(leftWord.toString()); 
 
                     // remaining hyphenated word should go on next line
                     if (splitIdx != hyphenWord.length()) {
@@ -54,11 +53,12 @@ public class SentryOA {
             
             int totalSpaces = maxWidth - letters;
             StringBuilder line = new StringBuilder();
+            int wordsWithSpaces = lineWords.size() - 1;
 
             // one word on line - align in center, with extra space on right
             if (wordsWithSpaces == 0) { // assert (wordsWithSpaces == lineWords.size()-1)
                 int leftSpacing = totalSpaces/2;
-                int rightSpacing = maxWidth - leftSpacing;
+                int rightSpacing = totalSpaces - leftSpacing;
                 line.append(" ".repeat(leftSpacing));
                 line.append(lineWords.get(0));
                 line.append(" ".repeat(rightSpacing));
@@ -73,24 +73,12 @@ public class SentryOA {
                     }
                     line.append(lineWords.get(j)).append(" ".repeat(spacing));
                 }
-                line.append(lineWords.get(lineWords.size() - 1));
+                line.append(lineWords.get(lineWords.size()-1));
             }
             res.add(line.toString());
         }
 
         return res;
     }
-
-    public List<String> harderTextJustification(String[] words, int maxWidth) {
-        return new ArrayList<>();
-    }
     
-}
-
-
-
-class Main {
-    public static void main(String[] args) {
-        
-    }
 }

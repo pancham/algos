@@ -35,7 +35,7 @@ public class MininumDifferenceOvergap {
 }
 
 
-class Main {
+class Main_MininumDifferenceOvergap {
     public static void main(String[] args) {
         MininumDifferenceOvergap m = new MininumDifferenceOvergap();
         
