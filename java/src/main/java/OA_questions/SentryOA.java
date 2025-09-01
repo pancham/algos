@@ -9,13 +9,11 @@ public class SentryOA {
         // but if they don't fit, break the word 
     public List<String> harderTextJustification(String[] words, int maxWidth) {
         List<String> res = new ArrayList<>();
-
         Deque<String> wordList = new ArrayDeque<>();
         for (String word : words) wordList.add(word);
 
         while (!wordList.isEmpty()) {
             List<String> lineWords = new ArrayList<>();
-
             int letters = 0;
             while (!wordList.isEmpty() && (letters + lineWords.size() + wordList.getFirst().length() <= maxWidth)) {
                 String word = wordList.removeFirst(); 
@@ -28,8 +26,7 @@ public class SentryOA {
                 String hyphenWord = wordList.removeFirst();
                 String[] hypenatedWords = hyphenWord.split("(?<=-)");
 
-                // split hyphenated word, make left split as big as possible
-                int splitIdx = 0;
+                int splitIdx = 0; // split hyphenated word, make left split as big as possible
                 StringBuilder leftWord = new StringBuilder();
                 for (String word : hypenatedWords) {
                     if (letters + lineWords.size() + word.length() <= maxWidth) {
@@ -42,8 +39,7 @@ public class SentryOA {
                 if (!leftWord.isEmpty()) {
                     lineWords.add(leftWord.toString()); 
 
-                    // remaining hyphenated word should go on next line
-                    if (splitIdx != hyphenWord.length()) {
+                    if (splitIdx != hyphenWord.length()) { // remaining hyphenated word should go on next line
                         String rightWord = hyphenWord.substring(splitIdx, hyphenWord.length());
                         wordList.addFirst(rightWord);
                     }
@@ -51,7 +47,6 @@ public class SentryOA {
                 else wordList.addFirst(hyphenWord);
             }
 
-            
             int totalSpaces = maxWidth - letters;
             StringBuilder line = new StringBuilder();
             int wordsWithSpaces = lineWords.size() - 1;
@@ -78,7 +73,6 @@ public class SentryOA {
             }
             res.add(line.toString());
         }
-
         return res;
     }
     
