@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  lms-postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lms-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lms_db
+      POSTGRES_USER: lms_user
+      POSTGRES_PASSWORD: lms_password
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persistent data storage
+      - lms_postgres_data:/var/lib/postgresql/data
+      # Optional: Mount for backup/restore
+      - ./backups:/backups
+    networks:
+      - lms-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lms_user -d lms_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Optional: pgAdmin for database management
+  lms-pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: lms-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@lms.local
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "8080:80"
+    volumes:
+      - lms_pgadmin_data:/var/lib/pgadmin
+    networks:
+      - lms-network
+    depends_on:
+      lms-postgres:
+        condition: service_healthy
+    profiles:
+      - admin  # Use docker-compose --profile admin up to include pgAdmin
+
+volumes:
+  lms_postgres_data:
+    driver: local
+  lms_pgadmin_data:
+    driver: local
+
+networks:
+  lms-network:
+    driver: bridge

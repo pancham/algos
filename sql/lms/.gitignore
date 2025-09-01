@@ -1,0 +1,37 @@
+# Docker volumes and data
+volumes/
+data/
+
+# Environment files (keep .env as template, ignore .env.local)
+.env.local
+.env.production
+
+# Backup files
+backups/*.sql
+*.backup
+*.dump
+
+# Logs
+*.log
+logs/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database connection files
+pgpass
+.pgpass
