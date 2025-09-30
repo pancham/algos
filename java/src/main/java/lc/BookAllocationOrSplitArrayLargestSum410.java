@@ -1,4 +1,4 @@
-package binary;
+package lc;
 
 import java.util.Arrays;
 
@@ -32,7 +32,7 @@ import java.util.Arrays;
  * Solves the Book Allocation Problem using Binary Search on the Answer.
  * The goal is to minimize the maximum number of pages allocated to any single student.
  */
-public class BookAllocation {
+public class BookAllocationOrSplitArrayLargestSum410 {
 
     /**
      * Helper function to determine if it is possible to allocate all books
