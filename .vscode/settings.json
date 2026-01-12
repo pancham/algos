@@ -1,5 +1,14 @@
 {
   "java.project.referencedLibraries": [
     "lib/**/*.jar"
-  ]
+  ],
+  "vsintellicode.java.completionsEnabled": false,
+  "vsintellicode.python.completionsEnabled": false,
+  "vsintellicode.sql.completionsEnabled": false,
+  "C_Cpp.copilotHover": "disabled",
+  "github.copilot.chat.agent.autoFix": true,
+  "github.copilot.chat.alternateGptPrompt.enabled": true,
+  "github.copilot.chat.anthropic.thinking.enabled": true,
+  "github.copilot.chat.anthropic.tools.websearch.enabled": true,
+  "github.copilot.chat.codesearch.enabled": true
 }
