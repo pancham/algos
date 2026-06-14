@@ -2,6 +2,7 @@
   "java.project.referencedLibraries": [
     "lib/**/*.jar"
   ],
+  "java.project.outputPath": "out",
   "vsintellicode.java.completionsEnabled": false,
   "vsintellicode.python.completionsEnabled": false,
   "vsintellicode.sql.completionsEnabled": false,

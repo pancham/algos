@@ -16,7 +16,7 @@ public class SplitPrefixSuffix {
         
 
         for (int i = 0; i < 100; i++) {
-            String rs = generateRandomString(Math.powExact(10, 5), 26);
+            String rs = generateRandomString((int) Math.pow(10, 5), 26);
             test(rs, k);
         }
     }
