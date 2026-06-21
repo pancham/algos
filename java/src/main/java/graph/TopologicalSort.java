@@ -15,6 +15,12 @@ public class TopologicalSort {
      * It can also be used to detect cycles in a directed graph.
      * 
      * Throws IllegalArgumentException if the graph has a cycle.
+     *
+     * Uses Kahn's algorithm (BFS): seed with indegree-0 nodes, peel them off one
+     * by one, decrement neighbor indegrees, enqueue any that reach 0. Nodes stuck
+     * in a cycle never reach indegree 0, so result.size() < total nodes → cycle.
+     *
+     * Time: O(V + E)  Space: O(V)
      */
     public static <T> List<T> sort(Map<T, List<T>> graph) {
         Map<T, Integer> indegree = new HashMap<>();
@@ -23,7 +29,7 @@ public class TopologicalSort {
         for (Map.Entry<T, List<T>> entry : graph.entrySet()) {
             indegree.putIfAbsent(entry.getKey(), 0);
             for (T neighbor : entry.getValue()) {
-                indegree.put(neighbor, indegree.getOrDefault(neighbor, 0) + 1);
+                indegree.merge(neighbor, 1, Integer::sum);
             }
         }
 
@@ -42,7 +48,7 @@ public class TopologicalSort {
             result.add(current);
 
             for (T neighbor : graph.getOrDefault(current, List.of())) {
-                int updatedIndegree = indegree.computeIfPresent(neighbor, (key, value) -> value - 1);
+                int updatedIndegree = indegree.merge(neighbor, -1, Integer::sum);
 
                 if (updatedIndegree == 0) {
                     queue.add(neighbor);
@@ -63,7 +69,7 @@ public class TopologicalSort {
      */
     public static <T> void addEdge(Map<T, List<T>> graph, T u, T v) {
         graph.computeIfAbsent(u, key -> new ArrayList<>()).add(v);
-        graph.computeIfAbsent(v, key -> new ArrayList<>());
+        graph.putIfAbsent(v, new ArrayList<>());
     }
 
     public static void main(String[] args) {

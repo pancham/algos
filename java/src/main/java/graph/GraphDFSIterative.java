@@ -17,7 +17,10 @@ class GraphDFSIterative {
 
             List<Integer> neighbors = graph.get(currentNode);
             if (neighbors != null) {
-                // NOTE: start from end to maintain DFS order from left to right
+                // Iterate neighbors in reverse so that the leftmost neighbor ends up on top of the stack.
+                // Stack is LIFO: the last pushed is the first popped. Pushing right-to-left (e.g. [1,2] → push 2
+                // then 1) leaves 1 on top, so 1 is explored first — matching the left-to-right order of recursive DFS.
+                // Without this reversal, iterative DFS still visits all nodes but in a different order.
                 for (int i = neighbors.size() - 1; i >= 0; i--) {
                     int neighbor = neighbors.get(i);
                     if (!visited.contains(neighbor)) {

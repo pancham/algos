@@ -1,6 +1,8 @@
 package graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 public class GraphCycleIterTricolor {
     // DFS State Constants
@@ -10,6 +12,9 @@ public class GraphCycleIterTricolor {
 
     /**
      * Detects a cycle in a directed graph using an iterative DFS with three colors.
+     * Time: O(V + E) — each node transitions WHITE→GREY→BLACK once, each edge examined once.
+     * Space: O(V + E) — adjacency list O(V+E), colors array O(V), explicit stack O(V).
+     * Iterative design avoids StackOverflowError on large graphs; also correctly handles self-loops.
      */
     public boolean hasCycle(int numVertices, int[][] edges) {
         // 1. Build Adjacency List from the edges array
@@ -33,46 +38,31 @@ public class GraphCycleIterTricolor {
     }
 
     private boolean isCyclicIterative(int startNode, List<List<Integer>> adj, int[] colors) {
-        Stack<NodeState> stack = new Stack<>();
-
-        // Push initial node and mark as GREY
-        colors[startNode] = GREY;
-        stack.push(new NodeState(startNode, adj.get(startNode).iterator()));
+        Stack<Integer> stack = new Stack<>();
+        stack.push(startNode);
 
         while (!stack.isEmpty()) {
-            NodeState current = stack.peek();
+            int node = stack.pop();
 
-            if (current.iterator.hasNext()) {
-                int neighbor = current.iterator.next();
+            if (colors[node] == BLACK) continue; // duplicate on stack — already fully processed
 
-                // If neighbor is GREY, we found a back-edge (Cycle)
-                if (colors[neighbor] == GREY) {
-                    return true;
-                }
+            if (colors[node] == GREY) {
+                // Second visit: all neighbors done, close out this node
+                colors[node] = BLACK;
+                continue;
+            }
 
-                // If neighbor is WHITE, push to stack and mark as GREY
-                if (colors[neighbor] == WHITE) {
-                    colors[neighbor] = GREY;
-                    stack.push(new NodeState(neighbor, adj.get(neighbor).iterator()));
-                }
-            } else {
-                // No more neighbors: backtrack and mark node as BLACK
-                colors[current.id] = BLACK;
-                stack.pop();
+            // First visit (WHITE): mark GREY and push back so we can mark BLACK after
+            // all neighbors are processed, then push unvisited neighbors on top.
+            colors[node] = GREY;
+            stack.push(node);
+
+            for (int neighbor : adj.get(node)) {
+                if (colors[neighbor] == GREY) return true; // back-edge → cycle
+                if (colors[neighbor] == WHITE) stack.push(neighbor);
             }
         }
         return false;
-    }
-
-    // Helper class to maintain state during iterative DFS
-    private static class NodeState {
-        int id;
-        Iterator<Integer> iterator;
-
-        NodeState(int id, Iterator<Integer> it) {
-            this.id = id;
-            this.iterator = it;
-        }
     }
 
     public static void main(String[] args) {

@@ -5,15 +5,19 @@ import java.util.*;
 /**
  * Graph definitions:
  * https://www.geeksforgeeks.org/graph-measurements-length-distance-diameter-eccentricity-radius-center/
- * The longest path between any two vertices is knows as the diameter of the graph
+ * The longest path between any two vertices is knows as the diameter of the
+ * graph
  */
 public class Diameter {
 
     /**
-     * Finds eccentricity of a node/vertex. A node eccentricity is the distance of the farthest node
+     * Finds eccentricity of a node/vertex. A node eccentricity is defined as the
+     * maximum distance of
+     * one node from another node.
      * Uses bfs to find node eccentricity.
      *
-     * @return an int array, index 0 -> farthest node, 1 -> distance to the farthest node
+     * @return an int array, index 0 -> farthest node, 1 -> distance to the farthest
+     *         node
      */
     private int[] nodeEccentricity(Map<Integer, List<Integer>> graph, int node) {
         Map<Integer, Integer> distance = new HashMap<>();
@@ -50,7 +54,8 @@ public class Diameter {
 
         while (!queue.isEmpty()) {
             int current = queue.poll();
-            if (current == end) break;
+            if (current == end)
+                break;
 
             for (int neighbor : graph.getOrDefault(current, new ArrayList<>())) {
                 if (!visited.contains(neighbor)) {
@@ -73,9 +78,11 @@ public class Diameter {
         return path;
     }
 
-    // Note that is undirected and all nodes are connected to each other. Undirected implies that connected nodes can be
-    // navigated from any node to another.
-    // Note that this method will not work for directed graphs, use graph variants for such graphs.
+    // Requires an undirected, connected (acyclic) tree — every node must be mutually reachable.
+    // Uses the double-BFS (2-sweep) trick: BFS from any node finds one diameter endpoint;
+    // BFS from that endpoint gives the diameter. Only correct for trees — cycles break the guarantee.
+    // Time: O(V + E)  Space: O(V)
+    // For directed or cyclic graphs use graphDiameter instead.
     public int treeDiameter(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
             return 0;
@@ -83,7 +90,8 @@ public class Diameter {
         // pick any node
         int start = graph.keySet().stream().findFirst().get();
 
-        // Step 1: find the farthest node, for a tree it is guaranteed to be one end of the furthest point
+        // Step 1: find the farthest node, for a tree it is guaranteed to be one end of
+        // the furthest point
         int[] ec1 = nodeEccentricity(graph, start);
         int farthestNode = ec1[0];
 
@@ -92,9 +100,8 @@ public class Diameter {
         return ec2[1];
     }
 
-    // Note that is undirected and all nodes are connected to each other. Undirected implies that connected nodes can be
-    // navigated from any node to another.
-    // Note that this method will not work for directed graphs, use graph variants for such graphs.
+    // Same constraints as treeDiameter — undirected connected tree only.
+    // Time: O(V + E)  Space: O(V)
     public List<Integer> treeLongestPathElements(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
             return List.of();
@@ -102,7 +109,8 @@ public class Diameter {
         // pick any node
         int start = graph.keySet().stream().findFirst().get();
 
-        // Step 1: find the farthest node, for a tree it is guaranteed to be one end of the furthest point
+        // Step 1: find the farthest node, for a tree it is guaranteed to be one end of
+        // the furthest point
         int[] ec1 = nodeEccentricity(graph, start);
         int farthestNode = ec1[0];
 
@@ -114,9 +122,11 @@ public class Diameter {
         return bfsPath(graph, otherEndpoint, farthestNode);
     }
 
+    // Works for any undirected graph — handles cycles and disconnected components.
+    // Runs BFS from every node and tracks the global maximum shortest-path distance.
+    // Time: O(V * (V + E))  Space: O(V)
     public int graphDiameter(Map<Integer, List<Integer>> graph) {
-        // A graph may have multiple sets of connected nodes. All nodes/vertices in a graph need to be
-        // iterated to find the furthest nodes.
+        // Graph may have disconnected components, so every node must be a BFS source.
 
         if (graph.isEmpty()) {
             return 0;
@@ -124,7 +134,7 @@ public class Diameter {
 
         int farthestDistance = -1;
 
-        for (int node: graph.keySet()) {
+        for (int node : graph.keySet()) {
             int[] ec = nodeEccentricity(graph, node);
             if (ec[1] > farthestDistance) {
                 farthestDistance = ec[1];
@@ -134,18 +144,19 @@ public class Diameter {
         return farthestDistance;
     }
 
+    // Same constraints as graphDiameter — works for any undirected graph.
+    // Time: O(V * (V + E))  Space: O(V)
     public List<Integer> graphLongestPathElements(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
             return List.of();
         }
 
-        // A graph may have multiple sets of connected nodes. All nodes/vertices in a graph need to be
-        // iterated to find the furthest nodes.
+        // Graph may have disconnected components, so every node must be a BFS source.
         int start = Integer.MIN_VALUE;
         int end = Integer.MIN_VALUE;
         int farthestDistance = -1;
 
-        for (int node: graph.keySet()) {
+        for (int node : graph.keySet()) {
             int[] ec = nodeEccentricity(graph, node);
             if (ec[1] > farthestDistance) {
                 farthestDistance = ec[1];

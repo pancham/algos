@@ -7,17 +7,23 @@ public class GraphCycleUndirected {
     Set<Integer> visited;
 
     public void addEdge(Integer from, Integer to) {
-        graph.getOrDefault(from, new ArrayList<>()).add(to);
-        graph.getOrDefault(to, new ArrayList<>()).add(from);
+        graph.computeIfAbsent(from, k -> new ArrayList<>()).add(to);
+        graph.computeIfAbsent(to, k -> new ArrayList<>()).add(from);
     }
 
-    // Using Depth First Search (DFS)
+    // Time: O(V + E) — each node and edge visited once
+    // Space: O(V) — visited set and call stack
+    // Unlike directed graphs, no visitingStack is needed. In an undirected graph a
+    // visited neighbor can only mean one of two things: it's the node we came from
+    // (parent), or it's a back edge — which is a cycle. Cross edges don't exist in
+    // undirected DFS, so visited + not-parent always means cycle.
     public boolean isCyclicDFS() {
         visited = new HashSet<>();
 
-        for (int v: graph.keySet()) {
+        for (int v : graph.keySet()) {
             if (!visited.contains(v)) {
-                if (isCyclicUtilDFS(v, 1)) {
+                // -1 = no parent; node ids are non-negative so -1 never matches a real neighbor
+                if (isCyclicUtilDFS(v, -1)) {
                     return true;
                 }
             }

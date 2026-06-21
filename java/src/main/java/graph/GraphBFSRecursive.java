@@ -18,7 +18,9 @@ public class GraphBFSRecursive {
         this.queue = new LinkedList<>();
     }
 
-    // Recursive BFS returning a List of visited nodes
+    // Time: O(V + E) — each vertex dequeued once, each edge examined once per endpoint
+    // Space: O(V) — queue/visited/result each hold at most V nodes; call stack is O(V) deep (one frame per vertex)
+    // Warning: recursion depth = V; large connected graphs risk StackOverflowError — prefer iterative BFS for those
     public List<Integer> bfsRecursive(int startNode) {
         visited.clear();
         result.clear();

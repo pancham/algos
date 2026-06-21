@@ -3,6 +3,8 @@ package graph;
 import java.util.*;
 
 public class GraphBFSIterative {
+    // Time: O(V + E) — each vertex dequeued once, each edge examined once per endpoint
+    // Space: O(V) — queue, visited set, and result list each hold at most V nodes
     public List<Integer> bfsIterative(Map<Integer, List<Integer>> graph, int startNode) {
         // There is no need to use class members for iterative traversal
         List<Integer> result = new ArrayList<>();
