@@ -78,10 +78,13 @@ public class Diameter {
         return path;
     }
 
-    // Requires an undirected, connected (acyclic) tree — every node must be mutually reachable.
-    // Uses the double-BFS (2-sweep) trick: BFS from any node finds one diameter endpoint;
-    // BFS from that endpoint gives the diameter. Only correct for trees — cycles break the guarantee.
-    // Time: O(V + E)  Space: O(V)
+    // Requires an undirected, connected, acyclic graph (i.e. tree) — every node
+    // must be mutually reachable.
+    // Uses the double-BFS (2-sweep) trick: BFS from any node finds one diameter
+    // endpoint;
+    // BFS from that endpoint gives the diameter. Only correct for trees — cycles
+    // break the guarantee.
+    // Time: O(V + E) Space: O(V)
     // For directed or cyclic graphs use graphDiameter instead.
     public int treeDiameter(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
@@ -101,7 +104,7 @@ public class Diameter {
     }
 
     // Same constraints as treeDiameter — undirected connected tree only.
-    // Time: O(V + E)  Space: O(V)
+    // Time: O(V + E) Space: O(V)
     public List<Integer> treeLongestPathElements(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
             return List.of();
@@ -123,8 +126,9 @@ public class Diameter {
     }
 
     // Works for any undirected graph — handles cycles and disconnected components.
-    // Runs BFS from every node and tracks the global maximum shortest-path distance.
-    // Time: O(V * (V + E))  Space: O(V)
+    // Runs BFS from every node and tracks the global maximum shortest-path
+    // distance.
+    // Time: O(V * (V + E)) Space: O(V)
     public int graphDiameter(Map<Integer, List<Integer>> graph) {
         // Graph may have disconnected components, so every node must be a BFS source.
 
@@ -145,7 +149,7 @@ public class Diameter {
     }
 
     // Same constraints as graphDiameter — works for any undirected graph.
-    // Time: O(V * (V + E))  Space: O(V)
+    // Time: O(V * (V + E)) Space: O(V)
     public List<Integer> graphLongestPathElements(Map<Integer, List<Integer>> graph) {
         if (graph.isEmpty()) {
             return List.of();

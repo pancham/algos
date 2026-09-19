@@ -30,5 +30,6 @@ replay_pid*
 
 # Gradle caches and local config
 .gradle/
+**/bin/
 **/build/
 **/out/
