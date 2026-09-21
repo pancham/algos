@@ -20,6 +20,33 @@ import java.util.*;
  */
 public class KnapsackReachability {
 
+    // Lightweight immutable node to reconstruct the exact combination of coins
+    private static class Node {
+        final int val;
+        final Node parent;
+
+        Node(int val, Node parent) {
+            this.val = val;
+            this.parent = parent;
+        }
+    }
+
+    // Result class holding reachability flag and the exact combination of coins
+    public static class Result {
+        public final boolean reachable;
+        public final List<Integer> combination;
+
+        public Result(boolean reachable, List<Integer> combination) {
+            this.reachable = reachable;
+            this.combination = combination;
+        }
+
+        @Override
+        public String toString() {
+            return "reachable=" + reachable + ", combination=" + combination;
+        }
+    }
+
     // ------------------------------------------------------------------------
     // 1. 0/1 KNAPSACK REACHABILITY
     // ------------------------------------------------------------------------
@@ -43,18 +70,22 @@ public class KnapsackReachability {
     //   -> Same loop structure, but counts ways (dp[j] += dp[j - num]) instead of ||.
     // ------------------------------------------------------------------------
 
-    public static boolean canReach01(int[] coins, int amount) {
+    public static Result canReach01(int[] coins, int amount) {
         boolean[] dp = new boolean[amount + 1];
+        Node[] path = new Node[amount + 1];
         dp[0] = true;
 
         for (int coin : coins) {
             // DESCENDING: ensures each coin is used at most once
             for (int j = amount; j >= coin; j--) {
-                dp[j] = dp[j] || dp[j - coin];
+                if (!dp[j] && dp[j - coin]) {
+                    dp[j] = true;
+                    path[j] = new Node(coin, path[j - coin]);
+                }
             }
         }
 
-        return dp[amount];
+        return new Result(dp[amount], reconstruct(path[amount]));
     }
 
     // ------------------------------------------------------------------------
@@ -79,8 +110,9 @@ public class KnapsackReachability {
     //      sums in 1..m can be formed. Exact boolean bounded reachability.
     // ------------------------------------------------------------------------
 
-    public static boolean canReachBounded(int[] coins, int[] counts, int amount) {
+    public static Result canReachBounded(int[] coins, int[] counts, int amount) {
         boolean[] dp = new boolean[amount + 1];
+        Node[] path = new Node[amount + 1];
         dp[0] = true;
 
         for (int i = 0; i < coins.length; i++) {
@@ -91,12 +123,15 @@ public class KnapsackReachability {
             for (int x = 0; x < k; x++) {
                 // DESCENDING: ensures this particular copy is used at most once
                 for (int j = amount; j >= coin; j--) {
-                    dp[j] = dp[j] || dp[j - coin];
+                    if (!dp[j] && dp[j - coin]) {
+                        dp[j] = true;
+                        path[j] = new Node(coin, path[j - coin]);
+                    }
                 }
             }
         }
 
-        return dp[amount];
+        return new Result(dp[amount], reconstruct(path[amount]));
     }
 
     // ------------------------------------------------------------------------
@@ -126,18 +161,35 @@ public class KnapsackReachability {
     //   -> Squares can be reused unlimited times.
     // ------------------------------------------------------------------------
 
-    public static boolean canReachUnbounded(int[] coins, int amount) {
+    public static Result canReachUnbounded(int[] coins, int amount) {
         boolean[] dp = new boolean[amount + 1];
+        Node[] path = new Node[amount + 1];
         dp[0] = true;
 
         for (int coin : coins) {
             // ASCENDING: allows the same coin to be reused repeatedly
             for (int j = coin; j <= amount; j++) {
-                dp[j] = dp[j] || dp[j - coin];
+                if (!dp[j] && dp[j - coin]) {
+                    dp[j] = true;
+                    path[j] = new Node(coin, path[j - coin]);
+                }
             }
         }
 
-        return dp[amount];
+        return new Result(dp[amount], reconstruct(path[amount]));
+    }
+
+    // ------------------------------------------------------------------------
+    // RECONSTRUCTION HELPER
+    // ------------------------------------------------------------------------
+
+    private static List<Integer> reconstruct(Node head) {
+        List<Integer> list = new ArrayList<>();
+        for (Node curr = head; curr != null; curr = curr.parent) {
+            list.add(curr.val);
+        }
+        Collections.reverse(list);
+        return list;
     }
 
     // ------------------------------------------------------------------------
@@ -149,38 +201,38 @@ public class KnapsackReachability {
         //
         // 0/1:
         //   Can we make 9 using each of {3, 5} at most once?
-        //   Possible sums: {0, 3, 5, 8} -> 9 is FALSE.
+        //   Possible sums: {0, 3, 5, 8} -> 9 is FALSE, combination = [].
         //
         // Bounded (counts = {2, 1}):
         //   Coins available: 3 (up to 2 times), 5 (up to 1 time).
-        //   Possible sums: 0, 3, 5, 6 (3+3), 8 (3+5), 11 (3+3+5) -> 9 is FALSE.
+        //   Possible sums: 0, 3, 5, 6 (3+3), 8 (3+5), 11 (3+3+5) -> 9 is FALSE, combination = [].
         //
         // Bounded (counts = {3, 1}):
         //   Coins available: 3 (up to 3 times), 5 (up to 1 time).
-        //   Possible sums include 9 (3+3+3) -> 9 is TRUE.
+        //   9 is achievable via 3 + 3 + 3 -> 9 is TRUE, combination = [3, 3, 3].
         //
         // Unbounded:
         //   Coins can be reused unlimited times.
-        //   3 + 3 + 3 = 9 -> 9 is TRUE.
+        //   3 + 3 + 3 = 9 -> 9 is TRUE, combination = [3, 3, 3].
 
         int[] coins = { 3, 5 };
         int amount = 9;
 
-        boolean zeroOne = canReach01(coins, amount);
+        Result zeroOne = canReach01(coins, amount);
 
         int[] countsLimited = { 2, 1 };
-        boolean boundedLimited = canReachBounded(coins, countsLimited, amount);
+        Result boundedLimited = canReachBounded(coins, countsLimited, amount);
 
         int[] countsEnough = { 3, 1 };
-        boolean boundedEnough = canReachBounded(coins, countsEnough, amount);
+        Result boundedEnough = canReachBounded(coins, countsEnough, amount);
 
-        boolean unbounded = canReachUnbounded(coins, amount);
+        Result unbounded = canReachUnbounded(coins, amount);
 
         System.out.println("Amount = " + amount + ", Coins = " + Arrays.toString(coins));
-        System.out.println("0/1 Reachable?                   : " + zeroOne);
-        System.out.println("Bounded (counts [2, 1]) Reachable: " + boundedLimited);
-        System.out.println("Bounded (counts [3, 1]) Reachable: " + boundedEnough);
-        System.out.println("Unbounded Reachable?             : " + unbounded);
+        System.out.println("0/1       : " + zeroOne);
+        System.out.println("Bounded [2, 1]: " + boundedLimited);
+        System.out.println("Bounded [3, 1]: " + boundedEnough);
+        System.out.println("Unbounded : " + unbounded);
     }
 }
 

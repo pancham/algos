@@ -3,10 +3,10 @@ package dynamic;
 import java.util.*;
 
 /**
- * CoinChangeVariations
+ * KnapsackCoinChange
  *
  * Demonstrates 1D Dynamic Programming for MINIMUM ITEMS / COIN CHANGE
- * across the three boundedness variations:
+ * across the three knapsack boundedness variations:
  *
  * 1. 0/1 Knapsack      - Each coin/item can be used AT MOST ONCE.
  * 2. Bounded (0/k)     - Each coin/item can be used UP TO counts[i] TIMES.
@@ -19,9 +19,34 @@ import java.util.*;
  * dp[0] = 0 (0 coins needed to make amount 0).
  * dp[1..amount] = amount + 1 (representing infinity / unreachable).
  */
-public class CoinChangeVariations {
+public class KnapsackCoinChange {
 
-    private static final int INF = 1_000_000_000;
+    // Lightweight immutable node to reconstruct the exact combination of coins
+    private static class Node {
+        final int coin;
+        final Node parent;
+
+        Node(int coin, Node parent) {
+            this.coin = coin;
+            this.parent = parent;
+        }
+    }
+
+    // Result class holding minimum coins and the exact combination of coins
+    public static class Result {
+        public final int minCoins;
+        public final List<Integer> combination;
+
+        public Result(int minCoins, List<Integer> combination) {
+            this.minCoins = minCoins;
+            this.combination = combination;
+        }
+
+        @Override
+        public String toString() {
+            return "minCoins=" + minCoins + ", combination=" + combination;
+        }
+    }
 
     // ------------------------------------------------------------------------
     // 1. 0/1 COIN CHANGE (USE EACH COIN AT MOST ONCE)
@@ -45,19 +70,26 @@ public class CoinChangeVariations {
     //      number of coins needed to make amount, using each at most once?
     // ------------------------------------------------------------------------
 
-    public static int minCoins01(int[] coins, int amount) {
+    public static Result minCoins01(int[] coins, int amount) {
         int[] dp = new int[amount + 1];
+        Node[] path = new Node[amount + 1];
         Arrays.fill(dp, amount + 1);
         dp[0] = 0;
 
         for (int coin : coins) {
             // DESCENDING: ensures each coin is used at most once
             for (int j = amount; j >= coin; j--) {
-                dp[j] = Math.min(dp[j], dp[j - coin] + 1);
+                if (dp[j - coin] + 1 < dp[j]) {
+                    dp[j] = dp[j - coin] + 1;
+                    path[j] = new Node(coin, path[j - coin]);
+                }
             }
         }
 
-        return dp[amount] > amount ? -1 : dp[amount];
+        if (dp[amount] > amount) {
+            return new Result(-1, Collections.emptyList());
+        }
+        return new Result(dp[amount], reconstruct(path[amount]));
     }
 
     // ------------------------------------------------------------------------
@@ -82,8 +114,9 @@ public class CoinChangeVariations {
     //      available quantities in stock, find minimum coins to dispense.
     // ------------------------------------------------------------------------
 
-    public static int minCoinsBounded(int[] coins, int[] counts, int amount) {
+    public static Result minCoinsBounded(int[] coins, int[] counts, int amount) {
         int[] dp = new int[amount + 1];
+        Node[] path = new Node[amount + 1];
         Arrays.fill(dp, amount + 1);
         dp[0] = 0;
 
@@ -95,12 +128,18 @@ public class CoinChangeVariations {
             for (int x = 0; x < k; x++) {
                 // DESCENDING: ensures this copy is used at most once
                 for (int j = amount; j >= coin; j--) {
-                    dp[j] = Math.min(dp[j], dp[j - coin] + 1);
+                    if (dp[j - coin] + 1 < dp[j]) {
+                        dp[j] = dp[j - coin] + 1;
+                        path[j] = new Node(coin, path[j - coin]);
+                    }
                 }
             }
         }
 
-        return dp[amount] > amount ? -1 : dp[amount];
+        if (dp[amount] > amount) {
+            return new Result(-1, Collections.emptyList());
+        }
+        return new Result(dp[amount], reconstruct(path[amount]));
     }
 
     // ------------------------------------------------------------------------
@@ -116,8 +155,9 @@ public class CoinChangeVariations {
     //   cost   = p * 1 (takes p coins)
     // ------------------------------------------------------------------------
 
-    public static int minCoinsBoundedBinarySplit(int[] coins, int[] counts, int amount) {
+    public static Result minCoinsBoundedBinarySplit(int[] coins, int[] counts, int amount) {
         int[] dp = new int[amount + 1];
+        Node[] path = new Node[amount + 1];
         Arrays.fill(dp, amount + 1);
         dp[0] = 0;
 
@@ -131,14 +171,26 @@ public class CoinChangeVariations {
                 int chunkCount = take; // this chunk represents 'take' coins
 
                 for (int j = amount; j >= chunkWeight; j--) {
-                    dp[j] = Math.min(dp[j], dp[j - chunkWeight] + chunkCount);
+                    if (dp[j - chunkWeight] + chunkCount < dp[j]) {
+                        dp[j] = dp[j - chunkWeight] + chunkCount;
+
+                        // Chain 'take' copies of this coin to the previous path snapshot
+                        Node curr = path[j - chunkWeight];
+                        for (int step = 0; step < take; step++) {
+                            curr = new Node(coin, curr);
+                        }
+                        path[j] = curr;
+                    }
                 }
 
                 remaining -= take;
             }
         }
 
-        return dp[amount] > amount ? -1 : dp[amount];
+        if (dp[amount] > amount) {
+            return new Result(-1, Collections.emptyList());
+        }
+        return new Result(dp[amount], reconstruct(path[amount]));
     }
 
     // ------------------------------------------------------------------------
@@ -163,19 +215,39 @@ public class CoinChangeVariations {
     //   -> Choose pass types (1-day, 7-day, 30-day) with unlimited purchases.
     // ------------------------------------------------------------------------
 
-    public static int minCoinsUnbounded(int[] coins, int amount) {
+    public static Result minCoinsUnbounded(int[] coins, int amount) {
         int[] dp = new int[amount + 1];
+        Node[] path = new Node[amount + 1];
         Arrays.fill(dp, amount + 1);
         dp[0] = 0;
 
         for (int coin : coins) {
             // ASCENDING: allows the same coin to be reused repeatedly
             for (int j = coin; j <= amount; j++) {
-                dp[j] = Math.min(dp[j], dp[j - coin] + 1);
+                if (dp[j - coin] + 1 < dp[j]) {
+                    dp[j] = dp[j - coin] + 1;
+                    path[j] = new Node(coin, path[j - coin]);
+                }
             }
         }
 
-        return dp[amount] > amount ? -1 : dp[amount];
+        if (dp[amount] > amount) {
+            return new Result(-1, Collections.emptyList());
+        }
+        return new Result(dp[amount], reconstruct(path[amount]));
+    }
+
+    // ------------------------------------------------------------------------
+    // RECONSTRUCTION HELPER
+    // ------------------------------------------------------------------------
+
+    private static List<Integer> reconstruct(Node head) {
+        List<Integer> list = new ArrayList<>();
+        for (Node curr = head; curr != null; curr = curr.parent) {
+            list.add(curr.coin);
+        }
+        Collections.reverse(list);
+        return list;
     }
 
     // ------------------------------------------------------------------------
@@ -186,37 +258,37 @@ public class CoinChangeVariations {
         // Example: coins = {1, 2, 5}, target amount = 11
         //
         // 1. Unbounded:
-        //    Can pick 5 + 5 + 1 = 11 (3 coins).
+        //    Can pick 5 + 5 + 1 = 11 (3 coins) -> [1, 5, 5].
         //
         // 2. Bounded with limited counts: {1, 1, 1}
-        //    Max possible sum is 1 + 2 + 5 = 8 < 11 -> impossible (-1).
+        //    Max possible sum is 1 + 2 + 5 = 8 < 11 -> impossible (-1, []).
         //
         // 3. Bounded with counts {1, 5, 1}:
-        //    Can pick 5 (1x) + 2 (3x) = 11 (4 coins).
+        //    Can pick 5 (1x) + 2 (3x) = 11 (4 coins) -> [2, 2, 2, 5].
         //
         // 4. 0/1 with coins = {1, 2, 5, 6, 8}, amount = 11:
-        //    Pick 5 + 6 = 11 (2 coins).
+        //    Pick 5 + 6 = 11 (2 coins) -> [5, 6].
 
         int[] coins = { 1, 2, 5 };
         int amount = 11;
 
-        int unboundedResult = minCoinsUnbounded(coins, amount);
+        Result unboundedResult = minCoinsUnbounded(coins, amount);
         System.out.println("Coins = " + Arrays.toString(coins) + ", Target = " + amount);
-        System.out.println("Unbounded (LC 322) Min Coins            : " + unboundedResult);
+        System.out.println("Unbounded (LC 322)             : " + unboundedResult);
 
         int[] countsLimited = { 1, 1, 1 };
-        int boundedLimitedResult = minCoinsBounded(coins, countsLimited, amount);
-        System.out.println("Bounded (counts [1, 1, 1]) Min Coins    : " + boundedLimitedResult);
+        Result boundedLimitedResult = minCoinsBounded(coins, countsLimited, amount);
+        System.out.println("Bounded (counts [1, 1, 1])     : " + boundedLimitedResult);
 
         int[] countsGenerous = { 1, 5, 1 };
-        int boundedGenerousResult = minCoinsBounded(coins, countsGenerous, amount);
-        int boundedBinaryResult = minCoinsBoundedBinarySplit(coins, countsGenerous, amount);
-        System.out.println("Bounded (counts [1, 5, 1]) Min Coins    : " + boundedGenerousResult);
-        System.out.println("Bounded (Binary Split) Min Coins        : " + boundedBinaryResult);
+        Result boundedGenerousResult = minCoinsBounded(coins, countsGenerous, amount);
+        Result boundedBinaryResult = minCoinsBoundedBinarySplit(coins, countsGenerous, amount);
+        System.out.println("Bounded (counts [1, 5, 1])     : " + boundedGenerousResult);
+        System.out.println("Bounded (Binary Split)         : " + boundedBinaryResult);
 
         int[] coins01 = { 1, 2, 5, 6, 8 };
-        int zeroOneResult = minCoins01(coins01, amount);
-        System.out.println("0/1 with {1, 2, 5, 6, 8} Min Coins      : " + zeroOneResult);
+        Result zeroOneResult = minCoins01(coins01, amount);
+        System.out.println("0/1 with {1, 2, 5, 6, 8}       : " + zeroOneResult);
     }
 }
 
