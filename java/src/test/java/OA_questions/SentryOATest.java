@@ -1,8 +1,5 @@
 package OA_questions;
 import org.junit.jupiter.api.Test;
-
-import OA_questions.SentryOA;
-
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
 

@@ -13,8 +13,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 tasks.withType(JavaCompile) {
-    destinationDirectory = file("$buildDir/out")
+    options.release = 21
 }
 
 
