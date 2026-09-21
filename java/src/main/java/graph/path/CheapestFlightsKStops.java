@@ -11,12 +11,32 @@ public class CheapestFlightsKStops {
     //
     // Why the per-pass snapshot (prev) is required:
     //   Without it, a single pass could update dist[v] and then immediately use that
-    //   updated value to relax dist[w] in the same pass — effectively chaining two edges
-    //   in one iteration. This violates the K-stop constraint because the algorithm would
-    //   count fewer passes than edges actually used. For example with k=0 (no stops, direct
-    //   flights only), without the snapshot a chain 0→1→3 could get applied in a single
-    //   pass, incorrectly reporting it as reachable in 0 stops. The snapshot freezes distances
-    //   to their state at the start of each pass, ensuring each pass adds exactly one edge.
+    //   updated value to relax dist[w] in the same pass — effectively chaining multiple
+    //   edges in a single iteration. This violates the K-stop constraint.
+    //
+    //   Concrete Example (Edge Chaining Bug without prev):
+    //     src = 0, dst = 2, k = 0 (direct flights only; at most 1 edge).
+    //     Flights given in order:
+    //       1. 0 -> 1 (cost 100)
+    //       2. 1 -> 2 (cost 100)
+    //       3. 0 -> 2 (cost 500)
+    //
+    //     - WITHOUT prev (in-place update on dist[] during Pass 0):
+    //         * Edge (0 -> 1, 100): dist[1] becomes 100.
+    //         * Edge (1 -> 2, 100): immediately reads dist[1] = 100, sets dist[2] = 200!
+    //         * Edge (0 -> 2, 500): 500 < 200 is false.
+    //         Result: dist[2] = 200 (Used 2 edges / 1 stop, violating k=0!).
+    //
+    //     - WITH prev (snapshot of dist[] at start of pass):
+    //         * prev = [0, INF, INF]
+    //         * Edge (0 -> 1, 100): prev[0] = 0, updates dist[1] = 100.
+    //         * Edge (1 -> 2, 100): checks prev[1], which is INF. Skipped!
+    //         * Edge (0 -> 2, 500): prev[0] = 0, updates dist[2] = 500.
+    //         Result: dist[2] = 500 (Correct: exactly 1 edge used for k=0).
+    //         Pass 1 (if k >= 1) would then snapshot dist, allowing edge 1 -> 2.
+    //
+    //     The snapshot freezes distances at the start of each pass, guaranteeing each
+    //     iteration adds at most one edge regardless of edge order in flights[][].
     //
     // Flight format: {from, to, price}.
     // Returns the minimum cost to reach dst from src within K stops, or -1 if unreachable.
@@ -29,11 +49,17 @@ public class CheapestFlightsKStops {
         for (int i = 0; i <= k; i++) {
             // Snapshot distances before this pass so each pass uses exactly one new edge.
             int[] prev = Arrays.copyOf(dist, n);
+            boolean updated = false;
             for (int[] flight : flights) {
                 int u = flight[0], v = flight[1], w = flight[2];
                 if (prev[u] != Integer.MAX_VALUE && prev[u] + w < dist[v]) {
                     dist[v] = prev[u] + w;
+                    updated = true;
                 }
+            }
+            // Early stopping: if no distance changed in this pass, shortest paths have settled.
+            if (!updated) {
+                break;
             }
         }
 
