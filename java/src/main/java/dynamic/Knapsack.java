@@ -9,8 +9,8 @@ import java.util.*;
  * and reconstruction of the selected items:
  *
  * 1. 0/1 Knapsack - each item can be used at most once
- * 2. Unbounded - each item can be used unlimited times
- * 3. Bounded - each item can be used up to count[i] times
+ * 2. Bounded - each item can be used up to count[i] times
+ * 3. Unbounded - each item can be used unlimited times
  *
  * Example:
  * weights = {2, 3, 4}
@@ -19,25 +19,6 @@ import java.util.*;
  * capacity = 7
  */
 public class Knapsack {
-
-    // ------------------------------------------------------------------------
-    // 1. 0/1 KNAPSACK
-    // ------------------------------------------------------------------------
-    //
-    // Each item can be selected at most once.
-    //
-    // Time:
-    // O(n * capacity)
-    //
-    // Space:
-    // O(capacity) for dp
-    // O(capacity) for choice
-    // Total: O(capacity)
-    //
-    // Important:
-    // Iterate capacity BACKWARD.
-    // This prevents the same item from being used more than once.
-    // ------------------------------------------------------------------------
 
     // Lightweight immutable node representing an item choice in the DP path.
     // Because nodes are immutable, referencing path[c - weights[i]] captures
@@ -97,50 +78,7 @@ public class Knapsack {
     }
 
     // ------------------------------------------------------------------------
-    // 2. UNBOUNDED KNAPSACK
-    // ------------------------------------------------------------------------
-    //
-    // Each item can be selected unlimited times.
-    //
-    // Time:
-    // O(n * capacity)
-    //
-    // Space:
-    // O(capacity) for dp and path references
-    // Total: O(capacity)
-    //
-    // Important:
-    // Iterate capacity FORWARD.
-    // This allows the same item to be used again.
-    // ------------------------------------------------------------------------
-
-    public static Result unboundedKnapsack(
-            int[] weights,
-            int[] values,
-            int capacity) {
-
-        int[] dp = new int[capacity + 1];
-        Node[] path = new Node[capacity + 1];
-
-        for (int i = 0; i < weights.length; i++) {
-            for (int c = weights[i]; c <= capacity; c++) {
-
-                int candidate = dp[c - weights[i]] + values[i];
-
-                if (candidate > dp[c]) {
-                    dp[c] = candidate;
-                    path[c] = new Node(i, path[c - weights[i]]);
-                }
-            }
-        }
-
-        List<Integer> selected = reconstruct(path[capacity]);
-
-        return new Result(dp[capacity], selected);
-    }
-
-    // ------------------------------------------------------------------------
-    // 3. BOUNDED KNAPSACK
+    // 2. BOUNDED KNAPSACK
     // ------------------------------------------------------------------------
     //
     // Each item i can be selected from 0 to counts[i] times.
@@ -194,10 +132,53 @@ public class Knapsack {
     }
 
     // ------------------------------------------------------------------------
+    // 3. UNBOUNDED KNAPSACK
+    // ------------------------------------------------------------------------
+    //
+    // Each item can be selected unlimited times.
+    //
+    // Time:
+    // O(n * capacity)
+    //
+    // Space:
+    // O(capacity) for dp and path references
+    // Total: O(capacity)
+    //
+    // Important:
+    // Iterate capacity FORWARD.
+    // This allows the same item to be used again.
+    // ------------------------------------------------------------------------
+
+    public static Result unboundedKnapsack(
+            int[] weights,
+            int[] values,
+            int capacity) {
+
+        int[] dp = new int[capacity + 1];
+        Node[] path = new Node[capacity + 1];
+
+        for (int i = 0; i < weights.length; i++) {
+            for (int c = weights[i]; c <= capacity; c++) {
+
+                int candidate = dp[c - weights[i]] + values[i];
+
+                if (candidate > dp[c]) {
+                    dp[c] = candidate;
+                    path[c] = new Node(i, path[c - weights[i]]);
+                }
+            }
+        }
+
+        List<Integer> selected = reconstruct(path[capacity]);
+
+        return new Result(dp[capacity], selected);
+    }
+
+    // ------------------------------------------------------------------------
     // RECONSTRUCTION
     // ------------------------------------------------------------------------
     //
-    // Unified reconstruction approach for 0/1, Unbounded, and Bounded knapsack.
+    // Unified reconstruction approach for 0/1, Bounded, and Unbounded knapsack.
     // Walks backwards through the immutable Node parent chain from head to root.
     // ------------------------------------------------------------------------
 
@@ -249,12 +230,12 @@ public class Knapsack {
         int capacity = 13;
 
         Result zeroOne = zeroOneKnapsack(weights, values, capacity);
-        Result unbounded = unboundedKnapsack(weights, values, capacity);
         Result bounded = boundedKnapsack(weights, values, counts, capacity);
+        Result unbounded = unboundedKnapsack(weights, values, capacity);
 
         System.out.println("0/1       : " + zeroOne);
-        System.out.println("Unbounded : " + unbounded);
         System.out.println("Bounded   : " + bounded);
+        System.out.println("Unbounded : " + unbounded);
     }
 }
 
@@ -268,14 +249,14 @@ public class Knapsack {
  * 
  * maxValue = 9
  * 
- * Unbounded:
+ * Bounded:
  * Item 0 + Item 0 + Item 1
  * weights = 2 + 2 + 3 = 7
  * values = 3 + 3 + 4 = 10
  * 
  * maxValue = 10
  * 
- * Bounded:
+ * Unbounded:
  * Item 0 + Item 0 + Item 1
  * weights = 2 + 2 + 3 = 7
  * values = 3 + 3 + 4 = 10
@@ -287,9 +268,9 @@ public class Knapsack {
  * ------------------
  * 
  * Time Space
- * 0/1 Knapsack O(n * W) O(W)
- * Unbounded Knapsack O(n * W) O(W)
- * Bounded Knapsack O(W * totalCopies) O(W)
+ * 0/1 Knapsack       O(n * W)              O(W)
+ * Bounded Knapsack   O(W * totalCopies)    O(W)
+ * Unbounded Knapsack O(n * W)              O(W)
  * 
  * where:
  * n = number of distinct item types
@@ -304,14 +285,14 @@ public class Knapsack {
  * for (c = W; c >= weight; c--)
  * // BACKWARD
  * 
+ * Bounded:
+ * for each allowed copy:
+ *     for (c = W; c >= weight; c--)
+ *     // BACKWARD
+ * 
  * Unbounded:
  * for (c = weight; c <= W; c++)
  * // FORWARD
- * 
- * Bounded:
- * for each allowed copy:
- * for (c = W; c >= weight; c--)
- * // BACKWARD
  * 
  * 
  * IMPORTANT RECONSTRUCTION NOTE
