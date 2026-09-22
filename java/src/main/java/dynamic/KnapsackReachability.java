@@ -17,6 +17,59 @@ import java.util.*;
  *
  * Base condition:
  * dp[0] = true (sum of 0 is always achievable with an empty set).
+ *
+ * ----------------------------------------------------------------------------
+ * LEETCODE PROBLEMS SOLVED & MAPPED:
+ * ----------------------------------------------------------------------------
+ *
+ * 1. 0/1 (Each item at most once -> Descending loop: j = amount; j >= coin; j--)
+ *    - LC 416: Partition Equal Subset Sum (Medium)
+ *      Link: https://leetcode.com/problems/partition-equal-subset-sum/
+ *      Description: Direct 1-to-1 match. Determine if nums can be partitioned
+ *                   into two subsets with equal sum (target = totalSum / 2).
+ *
+ *    - LC 1049: Last Stone Weight II (Medium)
+ *      Link: https://leetcode.com/problems/last-stone-weight-ii/
+ *      Description: Partition stones into two subsets to minimize difference.
+ *                   Equivalent to finding largest reachable sum <= totalSum / 2.
+ *
+ *    - LC 494: Target Sum (Medium)
+ *      Link: https://leetcode.com/problems/target-sum/
+ *      Description: Assign +/- to reach target sum; transforms into 0/1 subset
+ *                   sum target = (totalSum + target) / 2.
+ *
+ * 2. BOUNDED (Each item up to counts[i] times -> Descending loop with copies)
+ *    - LC 2585: Number of Ways to Earn Points (Hard)
+ *      Link: https://leetcode.com/problems/number-of-ways-to-earn-points/
+ *      Description: Types array gives [count_i, marks_i]; reach exact target
+ *                   score using at most count_i questions per type.
+ *
+ *    - LC 1774: Closest Dessert Cost (Medium)
+ *      Link: https://leetcode.com/problems/closest-dessert-cost/
+ *      Description: Determine reachable costs where each topping option can be
+ *                   chosen at most k = 2 times.
+ *
+ *    - LC 474: Ones and Zeroes (Medium)
+ *      Link: https://leetcode.com/problems/ones-and-zeroes/
+ *      Description: Multi-constraint knapsack tracking reachability under
+ *                   separate budgets for zeros and ones.
+ *
+ * 3. UNBOUNDED (Unlimited items -> Ascending loop: j = coin; j <= amount; j++)
+ *    - LC 139: Word Break (Medium)
+ *      Link: https://leetcode.com/problems/word-break/
+ *      Description: Exact boolean reachability. Determine if target string can
+ *                   be segmented using dictionary words unlimited times.
+ *
+ *    - LC 322: Coin Change (Medium - Reachability Aspect)
+ *      Link: https://leetcode.com/problems/coin-change/
+ *      Description: Checks whether an amount is reachable with unlimited coins;
+ *                   returns -1 when unreachable (dp[amount] == false).
+ *
+ *    - LC 279: Perfect Squares (Medium - Reachability Aspect)
+ *      Link: https://leetcode.com/problems/perfect-squares/
+ *      Description: Whether target n can be formed as a sum of square numbers
+ *                   (1, 4, 9, 16...) with unlimited reuse.
+ * ----------------------------------------------------------------------------
  */
 public class KnapsackReachability {
 

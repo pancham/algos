@@ -18,6 +18,49 @@ import java.util.*;
  * Base condition:
  * dp[0] = 0 (0 coins needed to make amount 0).
  * dp[1..amount] = amount + 1 (representing infinity / unreachable).
+ *
+ * ----------------------------------------------------------------------------
+ * LEETCODE PROBLEMS SOLVED & MAPPED:
+ * ----------------------------------------------------------------------------
+ *
+ * 1. 0/1 (Each coin at most once -> Descending loop: j = amount; j >= coin; j--)
+ *    - LC 474: Ones and Zeroes (Medium)
+ *      Link: https://leetcode.com/problems/ones-and-zeroes/
+ *      Description: Multi-constraint 0/1 Knapsack where each binary string is used
+ *                   at most once to form target counts of zeros and ones.
+ *
+ *    - LC 416: Partition Equal Subset Sum (Medium - Min Elements Variation)
+ *      Link: https://leetcode.com/problems/partition-equal-subset-sum/
+ *      Description: Minimum number of subset elements needed to reach target sum
+ *                   (totalSum / 2) with each element usable at most once.
+ *
+ * 2. BOUNDED (Each coin up to counts[i] times -> Descending / Binary Split)
+ *    - LC 1774: Closest Dessert Cost (Medium)
+ *      Link: https://leetcode.com/problems/closest-dessert-cost/
+ *      Description: Pick toppings to reach target cost where each topping can be
+ *                   chosen at most k = 2 times.
+ *
+ *    - LC 2585: Number of Ways to Earn Points (Hard - Min Questions Variation)
+ *      Link: https://leetcode.com/problems/number-of-ways-to-earn-points/
+ *      Description: Bounded selection where type i has count[i] questions worth
+ *                   marks[i] points; find minimum questions to reach target points.
+ *
+ * 3. UNBOUNDED (Unlimited coins -> Ascending loop: j = coin; j <= amount; j++)
+ *    - LC 322: Coin Change (Medium)
+ *      Link: https://leetcode.com/problems/coin-change/
+ *      Description: Given coins and target amount, find the fewest coins needed.
+ *                   Exact 1-to-1 match for minCoinsUnbounded.
+ *
+ *    - LC 279: Perfect Squares (Medium)
+ *      Link: https://leetcode.com/problems/perfect-squares/
+ *      Description: Find the least number of perfect square numbers (1, 4, 9, 16...)
+ *                   that sum to n, with unlimited reuse of squares.
+ *
+ *    - LC 983: Minimum Cost For Tickets (Medium)
+ *      Link: https://leetcode.com/problems/minimum-cost-for-tickets/
+ *      Description: Minimum travel pass cost using 1-day, 7-day, and 30-day tickets
+ *                   purchased unlimited times.
+ * ----------------------------------------------------------------------------
  */
 public class KnapsackCoinChange {
 
@@ -79,8 +122,9 @@ public class KnapsackCoinChange {
         for (int coin : coins) {
             // DESCENDING: ensures each coin is used at most once
             for (int j = amount; j >= coin; j--) {
-                if (dp[j - coin] + 1 < dp[j]) {
-                    dp[j] = dp[j - coin] + 1;
+                int candidate = dp[j - coin] + 1;
+                if (candidate < dp[j]) {
+                    dp[j] = candidate;
                     path[j] = new Node(coin, path[j - coin]);
                 }
             }
@@ -128,8 +172,9 @@ public class KnapsackCoinChange {
             for (int x = 0; x < k; x++) {
                 // DESCENDING: ensures this copy is used at most once
                 for (int j = amount; j >= coin; j--) {
-                    if (dp[j - coin] + 1 < dp[j]) {
-                        dp[j] = dp[j - coin] + 1;
+                    int candidate = dp[j - coin] + 1;
+                    if (candidate < dp[j]) {
+                        dp[j] = candidate;
                         path[j] = new Node(coin, path[j - coin]);
                     }
                 }
@@ -171,8 +216,9 @@ public class KnapsackCoinChange {
                 int chunkCount = take; // this chunk represents 'take' coins
 
                 for (int j = amount; j >= chunkWeight; j--) {
-                    if (dp[j - chunkWeight] + chunkCount < dp[j]) {
-                        dp[j] = dp[j - chunkWeight] + chunkCount;
+                    int candidate = dp[j - chunkWeight] + chunkCount;
+                    if (candidate < dp[j]) {
+                        dp[j] = candidate;
 
                         // Chain 'take' copies of this coin to the previous path snapshot
                         Node curr = path[j - chunkWeight];
@@ -224,8 +270,9 @@ public class KnapsackCoinChange {
         for (int coin : coins) {
             // ASCENDING: allows the same coin to be reused repeatedly
             for (int j = coin; j <= amount; j++) {
-                if (dp[j - coin] + 1 < dp[j]) {
-                    dp[j] = dp[j - coin] + 1;
+                int candidate = dp[j - coin] + 1;
+                if (candidate < dp[j]) {
+                    dp[j] = candidate;
                     path[j] = new Node(coin, path[j - coin]);
                 }
             }
