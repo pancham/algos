@@ -268,9 +268,9 @@ public class Knapsack {
  * ------------------
  * 
  * Time Space
- * 0/1 Knapsack       O(n * W)              O(W)
- * Bounded Knapsack   O(W * totalCopies)    O(W)
- * Unbounded Knapsack O(n * W)              O(W)
+ * 0/1 Knapsack O(n * W) O(W)
+ * Bounded Knapsack O(W * totalCopies) O(W)
+ * Unbounded Knapsack O(n * W) O(W)
  * 
  * where:
  * n = number of distinct item types
@@ -287,8 +287,8 @@ public class Knapsack {
  * 
  * Bounded:
  * for each allowed copy:
- *     for (c = W; c >= weight; c--)
- *     // BACKWARD
+ * for (c = W; c >= weight; c--)
+ * // BACKWARD
  * 
  * Unbounded:
  * for (c = weight; c <= W; c++)
